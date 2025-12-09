@@ -1,0 +1,86 @@
+<!-- templates/new_paper.html -->
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-3">新しい論文を追加</h1>
+
+<form method="post" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label class="form-label">タイトル *</label>
+    <input type="text" name="title" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">著者</label>
+    <input type="text" name="authors" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">年</label>
+    <input type="number" name="year" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">ジャーナル / 会議名</label>
+    <input type="text" name="journal" class="form-control">
+  </div>
+
+  <!-- ▼ 分野（カテゴリ） -->
+  <div class="mb-3">
+    <label class="form-label">分野（カテゴリー）</label>
+    <select name="category" class="form-select">
+      <option value="">（未選択）</option>
+      <option value="飛行">飛行</option>
+      <option value="匂い">匂い</option>
+      <option value="ナビゲーション">ナビゲーション</option>
+      <option value="その他">その他</option>
+    </select>
+  </div>
+
+  <!-- ▼ キーワード（複数） -->
+  <div class="mb-3">
+    <label class="form-label">キーワード（最大3つ）</label>
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input type="text" name="keyword1" class="form-control" placeholder="例: landing">
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="keyword2" class="form-control" placeholder="例: hindwing delay">
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="keyword3" class="form-control" placeholder="例: Papilio xuthus">
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">一言要約</label>
+    <input type="text" name="summary_short" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">詳しい概要（自分用メモ）</label>
+    <textarea name="summary_detail" rows="6" class="form-control"></textarea>
+  </div>
+
+    <hr>
+
+  <div class="mb-3">
+    <label class="form-label">論文PDFをアップロード</label>
+    <input type="file" name="pdf_file" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Word概要ファイルをアップロード</label>
+    <input type="file" name="word_file" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">PowerPointファイルをアップロード</label>
+    <input type="file" name="ppt_file" class="form-control">
+  </div>
+
+
+  <button type="submit" class="btn btn-primary">登録</button>
+  <a href="{{ url_for('list_papers') }}" class="btn btn-secondary">キャンセル</a>
+</form>
+{% endblock %}

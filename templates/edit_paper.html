@@ -1,0 +1,100 @@
+<!-- templates/edit_paper.html -->
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-3">論文情報を編集</h1>
+
+<form method="post" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label class="form-label">タイトル *</label>
+    <input type="text" name="title" class="form-control" required
+           value="{{ paper['title'] }}">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">著者</label>
+    <input type="text" name="authors" class="form-control"
+           value="{{ paper['authors'] }}">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">年</label>
+    <input type="number" name="year" class="form-control"
+           value="{{ paper['year'] }}">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">ジャーナル / 会議名</label>
+    <input type="text" name="journal" class="form-control"
+           value="{{ paper['journal'] }}">
+  </div>
+
+  <!-- ▼ 分野 -->
+  <div class="mb-3">
+    <label class="form-label">分野（カテゴリー）</label>
+    <select name="category" class="form-select">
+      <option value="" {% if not paper['category'] %}selected{% endif %}>（未選択）</option>
+      <option value="飛行" {% if paper['category'] == "飛行" %}selected{% endif %}>飛行</option>
+      <option value="匂い" {% if paper['category'] == "匂い" %}selected{% endif %}>匂い</option>
+      <option value="ナビゲーション" {% if paper['category'] == "ナビゲーション" %}selected{% endif %}>ナビゲーション</option>
+      <option value="その他" {% if paper['category'] == "その他" %}selected{% endif %}>その他</option>
+    </select>
+  </div>
+
+  <!-- ▼ キーワード -->
+  <div class="mb-3">
+    <label class="form-label">キーワード（最大3つ）</label>
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input type="text" name="keyword1" class="form-control" value="{{ kw1 }}">
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="keyword2" class="form-control" value="{{ kw2 }}">
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="keyword3" class="form-control" value="{{ kw3 }}">
+      </div>
+    </div>
+  </div>
+
+    <div class="mb-3">
+    <label class="form-label">一言要約</label>
+    <input type="text" name="summary_short" class="form-control"
+           value="{{ paper['summary_short'] }}">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">詳しい概要（自分用メモ）</label>
+    <textarea name="summary_detail" rows="6" class="form-control">{{ paper['summary_detail'] }}</textarea>
+  </div>
+
+    <hr>
+
+  <div class="mb-3">
+    <label class="form-label">論文PDFをアップロード（再指定する場合のみ）</label>
+    {% if paper["pdf_path"] %}
+      <p>現在のファイル: <a href="{{ paper['pdf_path'] }}" target="_blank">{{ paper["pdf_path"] }}</a></p>
+    {% endif %}
+    <input type="file" name="pdf_file" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Word概要ファイルをアップロード（再指定する場合のみ）</label>
+    {% if paper["word_path"] %}
+      <p>現在のファイル: <a href="{{ paper['word_path'] }}" target="_blank">{{ paper["word_path"] }}</a></p>
+    {% endif %}
+    <input type="file" name="word_file" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">PowerPointファイルをアップロード（再指定する場合のみ）</label>
+    {% if paper["ppt_path"] %}
+      <p>現在のファイル: <a href="{{ paper['ppt_path'] }}" target="_blank">{{ paper["ppt_path"] }}</a></p>
+    {% endif %}
+    <input type="file" name="ppt_file" class="form-control">
+  </div>
+
+
+  <button type="submit" class="btn btn-primary">保存</button>
+  <a href="{{ url_for('paper_detail', paper_id=paper['id']) }}" class="btn btn-secondary">キャンセル</a>
+</form>
+{% endblock %}

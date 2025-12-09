@@ -1,0 +1,113 @@
+<!-- templates/paper_detail.html -->
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-3">{{ paper["title"] }}</h1>
+
+<div class="row">
+  <div class="col-md-7">
+    <h5>基本情報</h5>
+    <table class="table table-sm">
+      <tr>
+        <th style="width: 120px;">著者</th>
+        <td>{{ paper["authors"] }}</td>
+      </tr>
+      <tr>
+        <th>年</th>
+        <td>{{ paper["year"] or "-" }}</td>
+      </tr>
+      <tr>
+        <th>ジャーナル</th>
+        <td>{{ paper["journal"] }}</td>
+      </tr>
+      <tr>
+        <th>登録日</th>
+        <td>{{ paper["created_at"] }}</td>
+      </tr>
+
+      <tr>
+        <th>分野</th>
+        <td>{{ paper["category"] or "未分類" }}</td>
+      </tr>
+
+    </table>
+
+    <h5 class="mt-4">一言要約</h5>
+    <p>{{ paper["summary_short"] }}</p>
+
+    <h5 class="mt-4">詳しい概要</h5>
+
+    <h5 class="mt-4">AI要約（1分で把握）</h5>
+    {% if paper["summary_ai"] %}
+      <pre style="white-space: pre-wrap;">{{ paper["summary_ai"] }}</pre>
+    {% else %}
+      <p>まだAI要約がありません。</p>
+    {% endif %}
+
+
+    <pre style="white-space: pre-wrap;">{{ paper["summary_detail"] }}</pre>
+
+  </div>
+
+  <div class="col-md-5">
+    <h5>関連ファイル</h5>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <strong>PDF:</strong><br>
+        {% if paper["pdf_path"] %}
+          <a href="{{ paper['pdf_path'] }}" target="_blank">{{ paper["pdf_path"] }}</a>
+        {% else %}
+          登録なし
+        {% endif %}
+      </li>
+      <li class="list-group-item">
+        <strong>Word概要:</strong><br>
+        {% if paper["word_path"] %}
+          <a href="{{ paper['word_path'] }}" target="_blank">{{ paper["word_path"] }}</a>
+        {% else %}
+          登録なし
+        {% endif %}
+      </li>
+      <li class="list-group-item">
+        <strong>PowerPoint:</strong><br>
+        {% if paper["ppt_path"] %}
+          <a href="{{ paper['ppt_path'] }}" target="_blank">{{ paper["ppt_path"] }}</a>
+        {% else %}
+          登録なし
+        {% endif %}
+      </li>
+    </ul>
+    <h5 class="mt-4">キーワード</h5>
+    {% if paper["keywords"] %}
+      <p>{{ paper["keywords"] }}</p>
+    {% else %}
+      <p>キーワード未設定</p>
+    {% endif %}
+
+    <div class="mt-3">
+      <form action="{{ url_for('generate_ai_summary_route', paper_id=paper['id']) }}"
+            method="post"
+            style="display:inline-block;">
+        <button type="submit" class="btn btn-sm btn-outline-primary me-2">
+          AI要約を生成 / 更新
+        </button>
+      </form>
+
+      <a href="{{ url_for('edit_paper', paper_id=paper['id']) }}" class="btn btn-warning me-2">
+        編集
+      </a>
+
+      <form action="{{ url_for('delete_paper', paper_id=paper['id']) }}"
+            method="post"
+            style="display:inline-block;"
+            onsubmit="return confirm('本当に削除しますか？');">
+        <button type="submit" class="btn btn-danger">
+          削除
+        </button>
+      </form>
+      <a href="{{ url_for('list_papers') }}" class="btn btn-outline-secondary ms-2">
+        一覧に戻る
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
