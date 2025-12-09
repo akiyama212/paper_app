@@ -1,11 +1,69 @@
-# app.py
-# 簡易 論文管理アプリ（Flask + SQLite）
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 from pathlib import Path
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
+
+app = Flask(__name__)
+
+# ★ app.py と同じフォルダに papers.db を作る
+BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = BASE_DIR / "papers.db"
+
+
+def init_db():
+    """DBとテーブルを作成＆不足カラムを追加"""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    # テーブルがなければ作成
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS papers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            authors TEXT,
+            year INTEGER,
+            journal TEXT,
+            summary_short TEXT,
+            summary_detail TEXT,
+            pdf_path TEXT,
+            word_path TEXT,
+            ppt_path TEXT,
+            created_at TEXT
+        )
+        """
+    )
+
+    # 既存カラム確認
+    cur.execute("PRAGMA table_info(papers)")
+    cols = [row[1] for row in cur.fetchall()]
+
+    # 追加カラム
+    if "summary_ai" not in cols:
+        cur.execute("ALTER TABLE papers ADD COLUMN summary_ai TEXT")
+
+    if "category" not in cols:
+        cur.execute("ALTER TABLE papers ADD COLUMN category TEXT")
+
+    if "keywords" not in cols:
+        cur.execute("ALTER TABLE papers ADD COLUMN keywords TEXT")
+
+    conn.commit()
+    conn.close()
+
+
+def get_db_connection():
+    """常に正しい場所の DB に接続"""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+# ★ ここが重要：モジュール読み込み時に一度だけ DB 初期化
+init_db()
+
 
 # アップロード設定
 UPLOAD_FOLDER = Path("uploads")
@@ -372,7 +430,5 @@ def uploaded_file(filename):
 
 
 if __name__ == "__main__":
-    init_db()
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
